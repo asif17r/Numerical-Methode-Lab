@@ -3,27 +3,27 @@
 #include <cmath>
 using namespace std;
 
-// Function to calculate the polynomial equation value P(x) for a given x and coefficients c
-double polynomial(double x, const vector<double>& c) {
+// Function to calculate the fitted curve values for a given x and coefficients
+double curve(double x, const vector<double>& coefficients) {
     double result = 0.0;
-    int n = c.size();
+    int n = coefficients.size();
 
     for (int i = 0; i < n; i++) {
-        result += c[i] * pow(x, i);
+        result += coefficients[i] * pow(x, i);
     }
 
     return result;
 }
 
-// Function to perform curve fitting using the polynomial method
-vector<double> curve_fitting(const vector<double>& x, const vector<double>& y, int degree) {
+// Function to perform least squares curve fitting
+vector<double> least_squares_curve_fit(const vector<double>& x, const vector<double>& y, int degree) {
     int n = x.size();
     int m = degree + 1;
 
-    // Create the matrix and vector for the linear system to be solved
     vector<vector<double>> matrix(m, vector<double>(m, 0.0));
     vector<double> vector(m, 0.0);
 
+    // Construct the normal equations matrix and vector
     for (int i = 0; i < n; i++) {
         double xi = x[i];
         double yi = y[i];
@@ -36,8 +36,8 @@ vector<double> curve_fitting(const vector<double>& x, const vector<double>& y, i
         }
     }
 
-    // Solve the linear system using any appropriate method (Gauss-Jordan, LU decomposition, etc.)
-    // For simplicity, we will use Gauss-Jordan elimination in this example.
+    // Solve the normal equations to find the coefficients using any appropriate method
+    // For simplicity, we will use Gaussian elimination in this example.
 
     for (int i = 0; i < m; i++) {
         // Make the diagonal element of the current row 1
@@ -59,7 +59,7 @@ vector<double> curve_fitting(const vector<double>& x, const vector<double>& y, i
         }
     }
 
-    return vector; // Return the coefficients c0, c1, ..., cn
+    return vector; // Return the coefficients of the fitted curve
 }
 
 int main() {
@@ -68,9 +68,9 @@ int main() {
 
     int degree = 2; // Choose the degree of the polynomial (degree = n)
 
-    vector<double> coefficients = curve_fitting(x, y, degree);
+    vector<double> coefficients = least_squares_curve_fit(x, y, degree);
 
-    cout << "Polynomial equation: ";
+    cout << "Fitted curve equation: ";
     for (int i = 0; i < coefficients.size(); i++) {
         cout << coefficients[i] << " * x^" << i;
         if (i != coefficients.size() - 1) {
@@ -79,10 +79,10 @@ int main() {
     }
     cout << endl;
 
-    // Example of evaluating the polynomial equation at a specific value of x
+    // Example of evaluating the fitted curve at a specific value of x
     double x_value = 2.5;
-    double result = polynomial(x_value, coefficients);
-    cout << "P(" << x_value << ") = " << result << endl;
+    double result = curve(x_value, coefficients);
+    cout << "Fitted curve value at x = " << x_value << ": " << result << endl;
 
     return 0;
 }
